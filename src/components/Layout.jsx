@@ -1,4 +1,5 @@
 import { Menu, X } from 'lucide-react';
+import { siWhatsapp } from 'simple-icons';
 import logo from '../assets/SW Multimedia Logo.png';
 import { navItems } from '../data/content';
 
@@ -27,11 +28,14 @@ export function Header({ page, go, open, setOpen }) {
       </button>
       <nav className={open ? 'show' : ''}>
         {navItems.map((item) => (
-          <button className={page === item ? 'active' : ''} onClick={() => go(item)} key={item}>
+          <button
+            className={`${page === item ? 'active' : ''} ${item === 'Contact' ? 'cta' : ''}`.trim()}
+            onClick={() => go(item)}
+            key={item}
+          >
             {item}
           </button>
         ))}
-        <button className="cta" onClick={() => go('Contact')}>Enroll Now</button>
       </nav>
       <button className="menu" onClick={() => setOpen(!open)} aria-label={open ? 'Close navigation' : 'Open navigation'}>
         {open ? <X /> : <Menu />}
@@ -76,13 +80,20 @@ export function Footer({ go }) {
         </div>
       </div>
       <div className="footerBottom">
-        <p>© 2026 SW MULTIMEDIA. ALL RIGHTS RESERVED.</p>
-        <p>LEARN · BUILD · GET PLACED</p>
+        <p style={{ margin: 0, lineHeight: '1.8' }}>
+          2026 SW MULTIMEDIA. ALL RIGHTS RESERVED.
+          <br /><br />
+          LEARN · BUILD · GET PLACED
+        </p>
       </div>
     </footer>
   );
 }
 
 export function WhatsApp() {
-  return <a className="float" href="#contact">WhatsApp</a>;
+  return (
+    <a className="float" href="#contact" aria-label="Open WhatsApp contact">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d={siWhatsapp.path} /></svg>
+    </a>
+  );
 }

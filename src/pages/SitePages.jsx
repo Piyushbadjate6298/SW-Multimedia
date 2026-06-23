@@ -1,21 +1,97 @@
-import { useState } from 'react';
-import { BriefcaseBusiness, ChevronRight, Mail, MapPin, Phone, Upload } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { BriefcaseBusiness, Building2, ChevronRight, GraduationCap, Mail, MapPin, Phone, Upload, Users, BookOpen, ArrowRight } from 'lucide-react';
 import { Form, Stats, Title } from '../components/Common';
-import { categories, posts } from '../data/content';
+import CourseVisual from '../components/CourseVisual';
+import { categories, blogPosts, aboutHero, aboutPillars, aboutHighlights, aboutStats } from '../data/content';
 import HomePage from './HomePage';
 
-function About() {
-  const values = [
-    '🌟 Our Mission: Empower 50,000+ technology aspirants globally through expert training and real product challenges.',
-    '🎯 Our Vision: Become India’s premier technical training network for elite developer and systems talent.',
-    '⚡ Our Core Values: Technical integrity, production-realistic constraints, milestone tracking and transparent benchmarking.',
-    '🏢 Infrastructure & Faculty: High-speed training bays, coding sandboxes, cloud labs and expert supervision.',
-  ];
+function About({ go }) {
+  const [activePillar, setActivePillar] = useState(0);
+  const [hoverHighlight, setHoverHighlight] = useState(null);
+  const pillar = aboutPillars[activePillar];
+
   return (
-    <section className="page">
-      <Title title="Building the Future of Enterprise IT Competence" />
-      <p className="big">SW Multimedia functions as a premium technology training, practical internship, and corporate placement ecosystem engineered to transform technical education models.</p>
-      <div className="grid featureGrid">{values.map((value) => <div className="feature" key={value}><h3>{value}</h3></div>)}</div>
+    <section className="page aboutPage">
+      <div className="aboutHero">
+        <div className="aboutHeroCopy">
+          <span className="badge"><Building2 size={16}/> About SW Multimedia</span>
+          <h1>{aboutHero.title}</h1>
+          <p className="big">{aboutHero.subtitle}</p>
+          <div className="aboutHeroActions">
+            <button onClick={() => go('Courses')}>Explore Courses <ChevronRight size={18}/></button>
+            <button className="secondary" onClick={() => go('Contact')}>Book Free Counselling</button>
+          </div>
+        </div>
+        <div
+          className="aboutHeroImage"
+          style={{
+            backgroundImage: `linear-gradient(135deg, rgba(2,6,23,.12), rgba(2,6,23,.62)), url(${aboutHero.image})`,
+            backgroundPosition: aboutHero.imagePosition || 'center',
+          }}
+        >
+          <div className="aboutHeroBadge"><GraduationCap size={18}/> Premium IT Training Campus</div>
+        </div>
+      </div>
+
+      <div className="aboutStatsStrip">
+        {aboutStats.map(([value, label]) => (
+          <div key={label}><b>{value}</b><span>{label}</span></div>
+        ))}
+      </div>
+
+      <div className="aboutPillarsSection">
+        <Title small="Who We Are" title="Mission, Vision, Values & Infrastructure"/>
+        <div className="aboutPillarTabs">
+          {aboutPillars.map((item, index) => (
+            <button key={item.title} type="button" className={activePillar === index ? 'on' : ''} onClick={() => setActivePillar(index)}>
+              <span>{item.tag}</span><b>{item.title}</b>
+            </button>
+          ))}
+        </div>
+        <div className="aboutPillarPanel">
+          <div className="aboutPillarImageWrap">
+            <div className="aboutPillarImage" style={{ backgroundImage: `linear-gradient(180deg, rgba(2,6,23,.08), rgba(2,6,23,.72)), url(${pillar.image})`, backgroundPosition: pillar.imagePosition || 'center' }}>
+              <span>{pillar.tag}</span>
+            </div>
+          </div>
+          <div className="aboutPillarBody">
+            <h2>{pillar.title}</h2>
+            <p>{pillar.text}</p>
+            <button type="button" className="blogReadBtn" onClick={() => go('Contact')}>Talk to Our Team <ChevronRight size={16}/></button>
+          </div>
+        </div>
+      </div>
+
+      <div className="aboutHighlightsSection">
+        <Title small="Campus & Culture" title="An Interactive Learning Environment Built for Results"/>
+        <div className="aboutHighlightsGrid">
+          {aboutHighlights.map((item, index) => (
+            <article
+              key={item.title}
+              className={`aboutHighlightCard ${hoverHighlight === index ? 'active' : ''}`}
+              onMouseEnter={() => setHoverHighlight(index)}
+              onMouseLeave={() => setHoverHighlight(null)}
+              onClick={() => setHoverHighlight(hoverHighlight === index ? null : index)}
+            >
+              <div className="aboutHighlightImageWrap">
+                <div className="aboutHighlightImage" style={{ backgroundImage: `linear-gradient(180deg, rgba(2,6,23,.06), rgba(2,6,23,.78)), url(${item.image})` }}>
+                  <BookOpen size={22}/>
+                </div>
+              </div>
+              <div className="aboutHighlightBody"><h3>{item.title}</h3><p>{item.text}</p></div>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <div className="aboutCta">
+        <div>
+          <span className="badge"><Users size={16}/> Join SW Multimedia</span>
+          <h2>Ready to Build Your IT Career With Expert Guidance?</h2>
+          <p>Connect with our counsellors for a personalized roadmap across courses, internships, and placements.</p>
+        </div>
+        <button onClick={() => go('Contact')}>Enquire Now <ArrowRight size={18}/></button>
+      </div>
     </section>
   );
 }
@@ -36,7 +112,8 @@ function Courses({ openCourse }) {
       </div>
       <div className="grid cards">
         {list.flatMap((category) => category.items.map((item) => (
-          <article className="card" onClick={() => openCourse(item)} key={`${category.title}-${item}`}>
+          <article className="card course" onClick={() => openCourse(item)} key={`${category.title}-${item}`}>
+            <CourseVisual name={item} category={category.title} />
             <h3>{item}</h3><p><b>{category.title}</b></p>
             <p>Duration: 3–6 Months · Eligibility: Graduate / Final Year · Fees: Contact Counsellor</p>
             <a>Open Course Details <ChevronRight size={16} /></a>
@@ -78,6 +155,26 @@ export function CourseDetail({ name }) {
 }
 
 function Internships() {
+  const fileInputRef = useRef(null);
+  const [resume, setResume] = useState(null);
+  const [uploadError, setUploadError] = useState('');
+
+  const handleResume = (file) => {
+    if (!file) return;
+    if (file.type !== 'application/pdf') {
+      setUploadError('Please upload a PDF file only.');
+      setResume(null);
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError('File must be 5MB or smaller.');
+      setResume(null);
+      return;
+    }
+    setUploadError('');
+    setResume(file);
+  };
+
   return (
     <section className="page split">
       <div>
@@ -87,15 +184,35 @@ function Internships() {
           <div className="job" key={role}><BriefcaseBusiness /><b>{role}</b><span>Apply Now</span></div>
         ))}
       </div>
-      <div className="upload"><Upload size={42} /><h2>Submit Onboarding Request</h2><p>Drag and drop your engineering resume here (PDF only, max 5MB)</p><Form button="Submit Internship Application" /></div>
+      <div
+        className="upload"
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => { e.preventDefault(); handleResume(e.dataTransfer.files?.[0]); }}
+      >
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".pdf,application/pdf"
+          className="srOnly"
+          onChange={(e) => handleResume(e.target.files?.[0])}
+        />
+        <button type="button" className="uploadBtn" onClick={() => fileInputRef.current?.click()} aria-label="Upload resume PDF">
+          <Upload size={42} />
+        </button>
+        <h2>Submit Onboarding Request</h2>
+        <p>Drag and drop your engineering resume here (PDF only, max 5MB)</p>
+        {resume && <p className="uploadFileName">Selected: {resume.name}</p>}
+        {uploadError && <p className="uploadError">{uploadError}</p>}
+        <Form button="Submit Internship Application" />
+      </div>
     </section>
   );
 }
 
 function Placements() {
   const people = [
-    ['Amit R.', 'Associate Cloud DevOps Specialist', 6.8], ['Priya S.', 'Data Analyst', 5.4],
-    ['Rahul K.', 'Full Stack Developer', 7.2], ['Sneha M.', 'Salesforce Administrator', 5.8],
+    ['Amit R.', 'Associate Cloud DevOps Specialist', 22], ['Priya S.', 'Data Analyst', 16],
+    ['Rahul K.', 'Full Stack Developer', 16], ['Sneha M.', 'Salesforce Administrator', 19],
   ];
   return (
     <section className="page">
@@ -116,7 +233,33 @@ function Corporate() {
 }
 
 function Blog() {
-  return <section className="page"><Title title="Technical Insights, Career Blueprints & Domain Overviews" /><div className="grid cards">{posts.map((post) => <article className="card" key={post}><span className="badge">Career Guidance</span><h3>{post}</h3><p>Read practical guidance from SW Multimedia trainers and placement mentors.</p><a>Read Article</a></article>)}</div></section>;
+  return (
+    <section className="page blogPage">
+      <Title title="Technical Insights, Career Blueprints & Domain Overviews" />
+      <div className="blogLead"><p>Practical articles for students planning courses, projects, interviews, internships, and placement preparation.</p></div>
+      <div className="blogGrid">
+        {blogPosts.map((post) => (
+          <article className="blogCard" key={post.title}>
+            <div
+              className="blogImage"
+              style={{
+                backgroundImage: `linear-gradient(180deg, rgba(2,6,23,.04), rgba(2,6,23,.78)), url(${post.image})`,
+                backgroundPosition: post.imagePosition || 'center',
+              }}
+            >
+              <span>{post.category}</span>
+            </div>
+            <div className="blogBody">
+              <div className="blogMeta"><span>{post.readTime}</span><span>SW Multimedia</span></div>
+              <h3>{post.title}</h3>
+              <p>{post.summary}</p>
+              <a className="blogReadBtn">Read Articles <ChevronRight size={16} /></a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
 }
 
 function Gallery() {
@@ -167,8 +310,8 @@ function Legal({ type }) {
 
 export function renderPage(page, go, openCourse) {
   const pages = {
-    Home: <HomePage go={go} openCourse={openCourse} />, About: <About />, Courses: <Courses openCourse={openCourse} />,
-    Internships: <Internships />, Placements: <Placements />, Corporate: <Corporate />, Blog: <Blog />,
+    Home: <HomePage go={go} openCourse={openCourse} />, About: <About go={go} />, Courses: <Courses openCourse={openCourse} />,
+    Internships: <Internships />, Placements: <Placements />, Blog: <Blog />,
     Gallery: <Gallery />, Contact: <Contact />, Admin: <Admin />, Privacy: <Legal type="Privacy" />,
     Terms: <Legal type="Terms" />, Refund: <Legal type="Refund" />,
   };

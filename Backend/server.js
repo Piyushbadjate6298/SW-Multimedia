@@ -1,121 +1,75 @@
-function Form({ button, dark = false }) {
+const express = require("express");
+const cors = require("cors");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const path = require("path");
+const fs = require("fs");
 
-  // Store form values
-  const [name, setName] = useState("");
-  const [mobile, setMobile] = useState("");
-  const [email, setEmail] = useState("");
-  const [course, setCourse] = useState("");
+dotenv.config();
 
-  // Function runs when form is submitted
-  const handleSubmit = async (e) => {
+const Lead = require(path.join(__dirname, "models", "Lead"));
 
-    // Prevent page refresh
-    e.preventDefault();
+const app = express();
+app.use(cors());
+app.use(express.json());
 
-    try {
+const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/sw_multimedia";
 
-      // Send data to backend API
-      const response = await fetch(
-        "http://localhost:5000/api/leads",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+let dbConnected = false;
 
-          // Data sent to MongoDB
-          body: JSON.stringify({
-            name,
-            mobile,
-            email,
-            course
-          })
-        }
-      );
+async function start() {
+  try {
+    await mongoose.connect(MONGO_URI);
+    dbConnected = true;
+    console.log("MongoDB connected");
+  } catch (err) {
+    dbConnected = false;
+    console.error("MongoDB connection error:", err);
+    console.error("Falling back to local file storage for leads.");
+  }
 
-      const data = await response.json();
-
-      console.log("Saved Data:", data);
-
-      alert("Form Submitted Successfully!");
-
-      // Clear form after submit
-      setName("");
-      setMobile("");
-      setEmail("");
-      setCourse("");
-
-    } catch (error) {
-
-      console.error("Error:", error);
-
-      alert("Error submitting form");
-
-    }
-  };
-
-  return (
-
-    <form
-      className={dark ? "form darkForm" : "form"}
-      onSubmit={handleSubmit}
-    >
-
-      {/* Full Name */}
-      <input
-        type="text"
-        placeholder="Enter your full name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        required
-      />
-
-      {/* Mobile Number */}
-      <input
-        type="text"
-        placeholder="Enter your mobile number"
-        value={mobile}
-        onChange={(e) => setMobile(e.target.value)}
-        required
-      />
-
-      {/* Email */}
-      <input
-        type="email"
-        placeholder="Enter your email address"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
-
-      {/* Course Selection */}
-      <select
-        value={course}
-        onChange={(e) => setCourse(e.target.value)}
-        required
-      >
-        <option value="">Select Course Target Domain</option>
-
-        {categories.map((c, index) => (
-          <option key={index} value={c.title}>
-            {c.title}
-          </option>
-        ))}
-      </select>
-
-      {/* Career Goal */}
-      <textarea
-        placeholder="Tell us about your educational background or career goals"
-      ></textarea>
-
-      {/* Submit Button */}
-      <button type="submit">
-        {button}
-      </button>
-
-    </form>
-
-  );
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => console.log(`Backend server running on port ${PORT}`));
 }
 
-export default Form;
+start();
+
+app.get("/", (req, res) => res.json({ ok: true }));
+
+app.post("/api/leads", async (req, res) => {
+  try {
+    const { name, phone, email, course, message } = req.body;
+    if (!name || !phone || !email || !course) {
+      return res.status(400).json({ success: false, error: "Missing required fields" });
+    }
+
+    const leadData = { name, phone, email, course, message, createdAt: new Date() };
+
+    if (dbConnected && mongoose.connection.readyState === 1) {
+      const lead = new Lead(leadData);
+      await lead.save();
+      return res.json({ success: true, lead });
+    }
+
+    // Fallback: save to local JSON file
+    try {
+      const fallbackFile = path.join(__dirname, "leads-fallback.json");
+      let arr = [];
+      if (fs.existsSync(fallbackFile)) {
+        const raw = fs.readFileSync(fallbackFile, "utf8");
+        arr = raw ? JSON.parse(raw) : [];
+      }
+      arr.push(leadData);
+      fs.writeFileSync(fallbackFile, JSON.stringify(arr, null, 2), "utf8");
+      return res.json({ success: true, lead: leadData, fallback: true });
+    } catch (fileErr) {
+      console.error("Fallback save error:", fileErr);
+      return res.status(500).json({ success: false, error: "Server error" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, error: "Server error" });
+  }
+});
+
+// server is started from `start()` after attempting DB connection

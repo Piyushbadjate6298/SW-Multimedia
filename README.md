@@ -23,3 +23,17 @@ npm run build
 
 ## Pages included
 Home, About, Courses, Course Detail, Internships, Placements, Corporate Training, Blog, Events, Gallery, Contact, Admin Preview, Privacy Policy, Terms, Refund Policy.
+
+## Backend (API)
+
+The backend is an Express + Mongoose server located in the `Backend` folder. It exposes a POST `/api/leads` endpoint to save enquiry leads to MongoDB.
+
+To run the backend locally:
+
+```bash
+cd Backend
+npm install
+npm start
+```
+
+The backend reads `MONGO_URI` and `PORT` from `Backend/.env`.
