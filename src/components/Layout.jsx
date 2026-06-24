@@ -1,5 +1,5 @@
 import { Menu, X } from 'lucide-react';
-import { siWhatsapp } from 'simple-icons';
+import { siInstagram, siWhatsapp } from 'simple-icons';
 import logo from '../assets/SW Multimedia Logo.png';
 import { navItems } from '../data/content';
 
@@ -7,10 +7,10 @@ export function Announcement() {
   return (
     <div className="ticker">
       <div>
-        🔥 Admissions Open for New Batches Across All Domains&nbsp;&nbsp; | &nbsp;&nbsp;
-        🚀 Free 1-on-1 Career Counselling&nbsp;&nbsp; | &nbsp;&nbsp;
-        🏆 1,000+ Placements Secured&nbsp;&nbsp; | &nbsp;&nbsp;
-        🎯 Internship + Placement Support
+        Admissions Open for New Batches Across All Domains&nbsp;&nbsp; | &nbsp;&nbsp;
+        Free 1-on-1 Career Counselling&nbsp;&nbsp; | &nbsp;&nbsp;
+        1,000+ Placements Secured&nbsp;&nbsp; | &nbsp;&nbsp;
+        Internship + Placement Support
       </div>
     </div>
   );
@@ -52,12 +52,12 @@ export function Footer({ go }) {
           <h2>READY TO START YOUR IT CAREER?</h2>
           <p>Join SW Multimedia today and take the first step towards a successful technology career.</p>
         </div>
-        <button onClick={() => go('Contact')}>ENQUIRE NOW →</button>
+        <button onClick={() => go('Contact')}>ENQUIRE NOW</button>
       </div>
       <div className="footerGrid">
         <div>
           <h3>SW MULTIMEDIA</h3>
-          <p>PREMIUM IT TRAINING · INTERNSHIPS · PLACEMENTS.</p>
+          <p>PREMIUM IT TRAINING - INTERNSHIPS - PLACEMENTS.</p>
           <p>Building strong technical skills, real-time project experience and placement confidence for students and professionals.</p>
         </div>
         <div>
@@ -68,25 +68,33 @@ export function Footer({ go }) {
         </div>
         <div>
           <h4>COURSES</h4>
-          <p>Full Stack Development</p><p>AWS Cloud Training</p><p>DevOps Engineering</p>
-          <p>Artificial Intelligence</p><p>Data Science</p><p>Cyber Security</p>
+          <p>Full Stack Development</p>
+          <p>AWS Cloud Training</p>
+          <p>DevOps Engineering</p>
+          <p>Artificial Intelligence</p>
+          <p>Data Science</p>
+          <p>Cyber Security</p>
         </div>
         <div>
           <h4>VISIT US</h4>
-          <p>📍 SW Multimedia, Chhatrapati Sambhajinagar, Maharashtra, India.</p>
-          <p>📞 +91 [Insert Official Phone]</p>
-          <p>✉️ admissions@swmultimedia.com</p>
-          <p>🕒 Training hours: 9 AM – 8 PM</p>
+          <p>SW Multimedia, S 06, 2nd Floor, Khinvasara August High Street, Ulkanagari, Chhatrapati Sambhajinagar - 431001.</p>
+          <p>+91 9112166105<br />+91 9011359616</p>
+          <p>swmultimedia2023@gmail.com</p>
+          <p>Training hours: 10 AM - 7 PM</p>
         </div>
       </div>
       <div className="footerBottom">
-        <p style={{ margin: 0, lineHeight: '1.8' }}>
-          2026 SW MULTIMEDIA. ALL RIGHTS RESERVED.
-          <br /><br />
-          LEARN · BUILD · GET PLACED
-        </p>
+        <p>2026 SW MULTIMEDIA. ALL RIGHTS RESERVED. LEARN - BUILD - GET PLACED</p>
       </div>
     </footer>
+  );
+}
+
+export function InstagramFloat() {
+  return (
+    <a className="float instagramFloat" href="https://www.instagram.com/" target="_blank" rel="noreferrer" aria-label="Open Instagram">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d={siInstagram.path} /></svg>
+    </a>
   );
 }
 

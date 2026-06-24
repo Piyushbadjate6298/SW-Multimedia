@@ -1,0 +1,29 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" fill="#071426"/>
+  <rect width="1200" height="800" fill="url(#bg)"/>
+  <path d="M169 584C253 466 340 406 430 404C520 402 561 482 640 461C719 440 746 338 850 308C923 287 994 307 1062 368" stroke="#00D9FF" stroke-width="26" stroke-linecap="round"/>
+  <path d="M840 225L1066 365L845 516L885 386L696 435L664 314L854 266L840 225Z" fill="url(#arrow)" stroke="white" stroke-opacity=".2" stroke-width="4"/>
+  <circle cx="248" cy="540" r="62" fill="#0059FF"/>
+  <circle cx="248" cy="540" r="36" fill="white" fill-opacity=".95"/>
+  <circle cx="485" cy="404" r="62" fill="#00D9FF"/>
+  <circle cx="485" cy="404" r="36" fill="white" fill-opacity=".95"/>
+  <circle cx="690" cy="430" r="62" fill="#0000FF"/>
+  <circle cx="690" cy="430" r="36" fill="white" fill-opacity=".95"/>
+  <rect x="118" y="112" width="382" height="142" rx="24" fill="white" fill-opacity=".11" stroke="white" stroke-opacity=".18"/>
+  <text x="154" y="171" fill="white" font-family="Arial, sans-serif" font-size="34" font-weight="800">Career Direction</text>
+  <text x="154" y="216" fill="#BDEFFF" font-family="Arial, sans-serif" font-size="24" font-weight="600">Learn. Build. Get Placed.</text>
+  <rect x="788" y="586" width="272" height="76" rx="20" fill="white" fill-opacity=".12" stroke="white" stroke-opacity=".18"/>
+  <text x="824" y="635" fill="white" font-family="Arial, sans-serif" font-size="28" font-weight="800">Our Vision</text>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="800" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00D9FF" stop-opacity=".28"/>
+      <stop offset=".46" stop-color="#0059FF" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#0000FF" stop-opacity=".34"/>
+    </linearGradient>
+    <linearGradient id="arrow" x1="657" y1="225" x2="1066" y2="516" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00D9FF"/>
+      <stop offset=".54" stop-color="#0059FF"/>
+      <stop offset="1" stop-color="#0000FF"/>
+    </linearGradient>
+  </defs>
+</svg>

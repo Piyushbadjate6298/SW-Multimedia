@@ -1,10 +1,9 @@
+import { useState } from 'react';
 import { ArrowRight, ChevronRight, Cloud, Code2, LayoutDashboard, PlayCircle, Sparkles } from 'lucide-react';
 import { Form, Stats, Title } from '../components/Common';
 import CourseVisual from '../components/CourseVisual';
 import PartnerLogo from '../components/PartnerLogo';
-import JourneyVisual from '../components/JourneyVisual';
-import { features, partners, popular, steps } from '../data/content';
-
+import { features, journeySteps, partners, popular } from '../data/content';
 
 function Hero({ go }) {
   return (
@@ -19,8 +18,11 @@ function Hero({ go }) {
         </div>
       </div>
       <div className="heroArt">
-        <div className="orb" /><Code2 /><Cloud /><LayoutDashboard />
-        <div className="glass"><b>Live Project Lab</b><span>MERN · DevOps · AI · Cloud</span></div>
+        <div className="orb" />
+        <Code2 />
+        <Cloud />
+        <LayoutDashboard />
+        <div className="glass"><b>Live Project Lab</b><span>MERN - DevOps - AI - Cloud</span></div>
       </div>
     </section>
   );
@@ -33,6 +35,7 @@ function Popular({ openCourse }) {
     'Build scalable client-server apps using React, Node and Next.js.',
     'Develop ML, deep learning, generative AI and automation systems.',
   ];
+
   return (
     <section className="section soft">
       <Title small="Demanded Courses" title="Build job-ready skills with structured learning tracks" />
@@ -40,7 +43,8 @@ function Popular({ openCourse }) {
         {popular.map((course, index) => (
           <article className="card course" onClick={() => openCourse(course)} key={course}>
             <CourseVisual name={course} variant="stack" />
-            <h3>{course}</h3><p>{descriptions[index % descriptions.length]}</p>
+            <h3>{course}</h3>
+            <p>{descriptions[index % descriptions.length]}</p>
             <a>View Track <ChevronRight size={16} /></a>
           </article>
         ))}
@@ -58,13 +62,16 @@ function Why() {
     'Practice technical, behavioral and project explanation rounds confidently.',
     'Optimize LinkedIn, GitHub, resume and career direction with mentors.',
   ];
+
   return (
     <section className="section">
       <Title small="Why SW Multimedia" title="A premium training ecosystem, not a basic institute website" />
       <div className="grid featureGrid">
         {features.map((feature, index) => (
           <div className="feature" key={feature}>
-            <CourseVisual name={feature} variant="feature" /><h3>{feature}</h3><p>{descriptions[index]}</p>
+            <CourseVisual name={feature} variant="feature" />
+            <h3>{feature}</h3>
+            <p>{descriptions[index]}</p>
           </div>
         ))}
       </div>
@@ -73,48 +80,43 @@ function Why() {
 }
 
 function Journey() {
- const stepDescriptions = [
-  'Student fills enquiry form, selects course, completes counselling and confirms admission.',
-  'Student attends live/recorded classes, watches video lessons and studies notes/material.',
-  'Student practices daily tasks, quizzes, assignments and clears doubts with mentors.',
-  'Student builds real-world projects and uploads work on GitHub/portfolio.',
-  'Student prepares resume, LinkedIn, mock interviews and project explanation.',
-  'Student gets certificate, placement support, interview calls and job guidance.'
-];
-
-const stepImages = [
-  'https://images.unsplash.com/photo-1516321318423-f06f85e504b3',
-  'https://images.unsplash.com/photo-1522202176988-66273c2fd55f',
-  'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40',
-  'https://images.unsplash.com/photo-1498050108023-c5249f4df085',
-  'https://images.unsplash.com/photo-1551836022-d5d88e9218df',
-  'https://images.unsplash.com/photo-1521791136064-7986c2920216'
-];
+  const [active, setActive] = useState(null);
+  const [hovered, setHovered] = useState(null);
+  const previewIndex = active ?? hovered;
 
   return (
-    <section className="section dark journey-section">
+    <section className="section dark journeyShowcase">
       <Title small="Student Journey" title="From enrolment to placement readiness" />
-      <div className="steps-grid">
-        {steps.map((step, index) => (
-          <div className={`step-card card-${stepThemes[index]}`} key={step}>
-            <div className="step-card-header">
-              <span className="step-number">0{index + 1}</span>
-              <span className="step-badge">Step {index + 1}</span>
-            </div>
-            <div className="step-card-visual">
-              <img
-  src={`${stepImages[index]}?auto=format&fit=crop&w=600&q=80`}
-  alt={step}
-  className="journey-img"
-/> 
-            </div>
-            <div className="step-card-body">
-              <h3>{step}</h3>
-              <p>{stepDescriptions[index]}</p>
-            </div>
+      <div className="steps interactive">
+        {journeySteps.map((step, index) => (
+          <div
+            className="step"
+            key={step.title}
+            onMouseEnter={() => setHovered(index)}
+            onMouseLeave={() => setHovered(null)}
+            onClick={() => setActive(index)}
+          >
+            <div className="stepIcon" style={{ backgroundImage: `url(${step.image})`, backgroundPosition: step.imagePosition || 'center' }} />
+            <b>{String(index + 1).padStart(2, '0')}</b>
+            <span>{step.title}</span>
+            <small>{step.tag}</small>
+            <p>{step.text}</p>
           </div>
         ))}
       </div>
+
+      {previewIndex !== null && (
+        <div className={`journeyModal ${active === null ? 'hoverModal' : ''}`} role="dialog" onClick={() => setActive(null)}>
+          <div className="journeyModalContent" onClick={(event) => event.stopPropagation()}>
+            <div className="journeyModalIcon">
+              <img src={journeySteps[previewIndex].image} alt={`${journeySteps[previewIndex].title} student journey`} className="journeyImageLarge" />
+            </div>
+            <h3>{journeySteps[previewIndex].title}</h3>
+            <p>{journeySteps[previewIndex].text}</p>
+            {active !== null && <button className="cta" onClick={() => setActive(null)}>Close</button>}
+          </div>
+        </div>
+      )}
     </section>
   );
 }
@@ -138,9 +140,9 @@ function Testimonials() {
         <div className="video"><PlayCircle size={64} /><span>Video Testimonial</span></div>
         <div>
           <span className="badge">Student Success</span>
-          <h2>“The production-level MERN stack training transformed my approach to building software.”</h2>
+          <h2>"The production-level MERN stack training transformed my approach to building software."</h2>
           <p>The integrated internship portfolio helped me prepare for real interviews and build confidence within 3 months of completing my track.</p>
-          <b>— Vikram S., Software Engineer</b>
+          <b>Mr. Sachin Wathore</b>
         </div>
       </div>
     </section>
@@ -158,5 +160,16 @@ function LeadForm() {
 }
 
 export default function HomePage({ go, openCourse }) {
-  return <><Hero go={go} /><Stats /><Popular openCourse={openCourse} /><Why /><Journey /><Partners /><Testimonials /><LeadForm /></>;
+  return (
+    <>
+      <Hero go={go} />
+      <Stats />
+      <Popular openCourse={openCourse} />
+      <Why />
+      <Journey />
+      <Partners />
+      <Testimonials />
+      <LeadForm />
+    </>
+  );
 }

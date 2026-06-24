@@ -1,3 +1,5 @@
+import directionImage from '../assets/about-direction.svg'
+
 export const navItems = ['Home', 'About', 'Courses', 'Internships', 'Placements', 'Blog', 'Gallery', 'Contact']
 
 export const aboutHero = {
@@ -19,7 +21,7 @@ export const aboutPillars = [
     title: 'Our Vision',
     tag: 'Direction',
     text: 'Become India\'s premier technical training network for elite developer, cloud, data, and systems talent with measurable outcomes.',
-    image: 'https://images.unsplash.com/photo-1454165804603-c3d57bc86b40?auto=format&fit=crop&w=1000&q=80',
+    image: directionImage,
     imagePosition: 'center',
   },
   {
